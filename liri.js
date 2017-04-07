@@ -27,87 +27,96 @@ function cTweets() {
 
 
 // Function for Spotify
-// function cSpotify() {
+function cSpotify() {
+
+	// Default Ace of Base
+	if (!searchData) {
+		console.log();
+	};
+
 	// Require Spotify
 	var spotify = require('spotify');
-	// var clientSpotify = (keys.spotifyKeys);
 	var searchData = process.argv[3];
 
 	// Grabbing Spotify search
-	spotify.search({ type: 'track', query: "Hello"}, function(err, data) {
-	    if ( err ) {
-	        	console.log('Error occurred: ' + err);
-	        }
-	        return;
-
-	    // for (var i = 0; i < 2; i++) {
-	    // 		console.log(data[i]);
-
-	    // }
-	    // Do something with 'data' 
-	    console.log('data', JSON.stringify(data, null, 4));
-	    console.log('Artist: ', + data.tracks.items[0].artist[0].name);
-	    // console.log('Address', data.results[0].)
+	spotify.search({ type: 'track', query: searchData}, function(error, data) {
+	    if (!error) {
+	    	console.log('Artist: ' + data.tracks.items[0].artists[0].name);
+	    	console.log('Title: ' + data.tracks.items[0].name);
+	        console.log('Preview Link: ', JSON.stringify(data.tracks.items[0].artists[0].external_urls.spotify));
+	        console.log('Album: ' + data.tracks.items[0].album.name);
+	        };
 
 	}); // End .search for Spotify
-// }; // End cSpotify function
+}; // End cSpotify function
 
-// Require OMDB
-// var request = require('request');
 
-// // Store all of the arguments in an array
-// var nodeArgs = process.argv;
+// Function for OMDB
+function cOmdb() {
 
-// // Grab the movie name
-// var movieName = "";
+	// Default Mr.Nobody
+	if (!movieName) {
+		console.log();
+	};
 
-// // Loop through all words in the node argument and add "+"
-// for (var i = 2; i < nodeArgs.length; i++) {
-// 	if (i > 2 && i < nodeArgs.length) {
-// 		movieName = movieName + "+" + nodeArgs[i];
-// 	} else {
-// 		movieName += nodeArgs[i];
-// 	}
-// }
+	// Require OMDB
+	var request = require('request');
 
-// Run a request to the OMDB API with the movie
-// var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&r=json";
-// console.log(queryUrl);
+	// Grab the movie name
+	var movieName = process.argv[3];
 
-// var queryUrl = 'http://www.omdbapi.com/?t=' + movieName + '&y=&plot=short&tomatoes=true&r=json';
-// console.log(queryUrl);
+	var queryUrl = 'http://www.omdbapi.com/?t=' + movieName + '&y=&plot=short&tomatoes=true&r=json';
+	// console.log(queryUrl);
 
-// request(queryUrl, function(error, response, body) {
 
-// 	if (!error && response.statusCode === 200) {
-// 		console.log("Title: " + JSON.parse(body).Title);
-		// console.log("Release Year: " + JSON.parse(body).Year);
-		// console.log("imdb Rating: " + JSON.parse(body).imdbRating);
-		// console.log("Country: " + JSON.parse(body).Country);
-		// console.log("Language: " + JSON.parse(body).Language);
-		// console.log("Plot: " + JSON.parse(body).Plot);
-		// console.log("Actors: " + JSON.parse(body).Actors);
-		// console.log("Rotten Tomatoes Rating: " + );
-		// console.log("Rotten Tomatoes URL: " + );
-// 	}
-// });
+	request(queryUrl, function(error, response, body) {
 
+		var movieInfo = JSON.parse(body);
+
+		if (!error) {
+			console.log("Title: " + movieInfo.Title);
+			console.log("Release Year: " + movieInfo.Year);
+			console.log("imdb Rating: " + movieInfo.imdbRating);
+			console.log("Country: " + movieInfo.Country);
+			console.log("Language: " + movieInfo.Language);
+			console.log("Plot: " + movieInfo.Plot);
+			console.log("Actors: " + movieInfo.Actors);
+			console.log("Rotten Tomatoes Rating: " + movieInfo.tomatoRating);
+			console.log("Rotten Tomatoes URL: " + movieInfo.tomatoURL);
+		}
+	});
+}; // End cOmdb function
+
+
+// Function for do-what-it-says
+function doIt() {
+	// Require fs
+	var fs = require("fs");
+
+		// Read file random.txt function
+		fs.readFile("random.txt", "utf8", function(error, data) {
+			if (error) {
+				throw error;
+			}
+			console.log(data);
+		}); // End .readFile
+};
 
 // Switch statment for all functions
 switch(command) {
 	case 'my-tweets':
 		cTweets();
 		break;
-	// case 'spotify-this-song':
-	// 	cSpotify();
-	// default: 
-	// 	("The Sign");
-	// 	break;
-	// case 'movie-this':
-	// 	console.log('movie this ', request);
-	// 	break;
-	// case 'do-what-it-says':
-	// 	console.log('do what it says ', );
+	case 'spotify-this-song':
+		cSpotify();
+		break;
+	case 'movie-this':
+		cOmdb();
+		break;
+	case 'do-what-it-says':
+		doIt();
+		break;
+		default: ;
 };
 
 
